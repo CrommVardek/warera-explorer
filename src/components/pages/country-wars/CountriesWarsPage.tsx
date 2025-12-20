@@ -1,15 +1,15 @@
 import { useCountries } from "../../../services/CountryService";
-import { CountryAlliances } from "./CountryAlliances";
+import { CountryWars } from "./CountryWars";
 
-export const CountriesAlliancesPage = () => {
+export const CountriesWarsPage = () => {
   const { countries, loading } = useCountries();
 
   if (loading) return <p>Loading…</p>;
 
   return (
     <div>
-      <h1>Alliance Network</h1>
-      <CountryAlliances countries={countries} />
+      <h1>Wars Network</h1>
+      <CountryWars countries={countries} />
     </div>
   );
 }
