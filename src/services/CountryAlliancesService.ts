@@ -4,7 +4,7 @@ import type {
 } from "../components/common/graph/Graph";
 import type { Country } from "../models/country/Country";
 
-export function buildAllianceGraph(countries: Country[]) {
+export const buildAllianceGraph = (countries: Country[]) => {
   const nodes: GraphNode[] = countries.map((c) => ({
     id: c._id,
     label: c.name,
@@ -31,12 +31,5 @@ export function buildAllianceGraph(countries: Country[]) {
       edges.push({ id: a, source: c._id, target: ally });
     }
   }
-
-  console.log(
-    `Built alliance graph with ${nodes.length} nodes and ${edges.length} edges.`
-  );
-  console.log(nodes);
-  console.log(edges);
-
   return { nodes, edges };
-}
+};

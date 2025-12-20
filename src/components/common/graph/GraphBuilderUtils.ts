@@ -1,3 +1,5 @@
+import type { GraphRelationship } from "./Graph";
+
 export const AddLabelsToNode = (
   nodeSelection: d3.Selection<SVGGElement, any, SVGGElement, any>
 ) => {
@@ -18,4 +20,20 @@ export const AddCircleToNode = (
     .append("circle")
     .attr("r", 30)
     .attr("fill", (d) => d.color || "#69b3a2");
+};
+
+export const HighlightLinksOnHover = (
+  nodeSelection: d3.Selection<SVGGElement, any, SVGGElement, any>,
+  link: d3.Selection<
+    d3.BaseType | SVGLineElement,
+    GraphRelationship,
+    SVGGElement,
+    unknown
+  >
+) => {
+  nodeSelection.on("mouseover", (_, d) => {
+    link.attr("stroke-width", (l: any) =>
+      l.source.id === d.id || l.target.id === d.id ? 5 : 2
+    );
+  });
 };

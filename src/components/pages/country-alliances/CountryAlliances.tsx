@@ -3,7 +3,7 @@ import * as d3 from "d3";
 
 import type { Country } from "../../../models/country/Country";
 import { buildAllianceGraph } from "../../../services/CountryAlliancesService";
-import { AddCircleToNode, AddLabelsToNode } from "../../common/graph/GraphBuilderUtils";
+import { AddCircleToNode, AddLabelsToNode, HighlightLinksOnHover } from "../../common/graph/GraphBuilderUtils";
 
 interface CountryAlliancesProps { countries: Country[] }
 
@@ -62,6 +62,9 @@ export const CountryAlliances = ({ countries }: CountryAlliancesProps) => {
         AddCircleToNode(node);
 
         AddLabelsToNode(node);
+
+        //Highlight links on hover
+        HighlightLinksOnHover(node, link);
 
         // Update positions each tick
         simulation.on("tick", () => {
