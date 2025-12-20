@@ -3,7 +3,7 @@ export interface GraphNode {
   label: string;
 }
 
-export interface GraphEdge {
+export interface GraphRelationship {
   id: string;
   source: string;
   target: string;

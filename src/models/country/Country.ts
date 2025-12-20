@@ -1,6 +1,6 @@
 /** Represents a single country */
 export interface Country {
-  id: string;
+  _id: string;
   name: string;
   code: string;
 

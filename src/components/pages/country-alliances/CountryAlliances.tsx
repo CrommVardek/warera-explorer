@@ -9,12 +9,24 @@ interface CountryAlliancesProps { countries: Country[] }
 export const CountryAlliances = ({ countries }: CountryAlliancesProps) => {
     const svgRef = useRef<SVGSVGElement | null>(null);
 
+    const zoomGroupRef = useRef<SVGGElement | null>(null);
 
     useEffect(() => {
         const { nodes, edges } = buildAllianceGraph(countries);
 
-        const svg = d3.select(svgRef.current);
+        const svg = d3.select<SVGSVGElement, unknown>(svgRef.current!);
         svg.selectAll("*").remove(); // clear previous graph
+
+        const zoomGroup = svg.append("g");
+
+        // Set up zoom behavior
+        const zoom = d3.zoom<SVGSVGElement, unknown>()
+            .scaleExtent([0.1, 4])
+            .on("zoom", (event) => {
+                zoomGroup.attr("transform", event.transform.toString());
+            });
+
+        svg.call(zoom);
 
         const simulation = d3
             .forceSimulation(nodes as any)
@@ -23,7 +35,7 @@ export const CountryAlliances = ({ countries }: CountryAlliancesProps) => {
             .force("center", d3.forceCenter(1200 / 2, 800 / 2));
 
         // Lines for alliances
-        const link = svg
+        const link = zoomGroup
             .append("g")
             .attr("stroke", "#999")
             .attr("stroke-opacity", 0.6)
@@ -33,7 +45,7 @@ export const CountryAlliances = ({ countries }: CountryAlliancesProps) => {
             .attr("stroke-width", 2);
 
         // Node group (circle + label)
-        const node = svg
+        const node = zoomGroup
             .append("g")
             .selectAll<SVGGElement, any>("g")
             .data(nodes)
@@ -99,6 +111,8 @@ export const CountryAlliances = ({ countries }: CountryAlliancesProps) => {
             width={1200}
             height={800}
             style={{ border: "1px solid #ccc", background: "#fafafa" }}
-        />
+        >
+            <g ref={zoomGroupRef} />
+        </svg>
     );
 }
