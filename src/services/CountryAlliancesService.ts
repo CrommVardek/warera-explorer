@@ -8,6 +8,7 @@ export function buildAllianceGraph(countries: Country[]) {
   const nodes: GraphNode[] = countries.map((c) => ({
     id: c._id,
     label: c.name,
+    color: c.scheme,
   }));
 
   const nodeIds = new Set(nodes.map((n) => n.id));

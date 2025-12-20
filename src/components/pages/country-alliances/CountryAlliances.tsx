@@ -3,6 +3,7 @@ import * as d3 from "d3";
 
 import type { Country } from "../../../models/country/Country";
 import { buildAllianceGraph } from "../../../services/CountryAlliancesService";
+import { AddCircleToNode, AddLabelsToNode } from "../../common/graph/GraphBuilderUtils";
 
 interface CountryAlliancesProps { countries: Country[] }
 
@@ -58,18 +59,9 @@ export const CountryAlliances = ({ countries }: CountryAlliancesProps) => {
             );
 
 
-        node
-            .append("circle")
-            .attr("r", 12)
-            .attr("fill", "#1976d2");
+        AddCircleToNode(node);
 
-        node
-            .append("text")
-            .text((d) => d.label)
-            .attr("x", 18)
-            .attr("y", 4)
-            .style("font-size", "12px")
-            .style("font-family", "sans-serif");
+        AddLabelsToNode(node);
 
         // Update positions each tick
         simulation.on("tick", () => {

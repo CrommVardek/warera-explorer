@@ -1,6 +1,7 @@
 export interface GraphNode {
   id: string;
   label: string;
+  color?: string;
 }
 
 export interface GraphRelationship {
