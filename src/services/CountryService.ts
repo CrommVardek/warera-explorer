@@ -8,16 +8,27 @@ export function useCountries() {
   const [error, setError] = useState<unknown>(null);
 
   useEffect(() => {
+    const controller = new AbortController();
+    const { signal } = controller;
+
     (async () => {
       try {
-        const resp = await getAllCountries();
+        const resp = await getAllCountries({ signal });
         setCountries(resp.result.data);
       } catch (err) {
-        setError(err);
+        if (!signal.aborted) {
+          setError(err);
+        }
       } finally {
-        setLoading(false);
+        if (!signal.aborted) {
+          setLoading(false);
+        }
       }
     })();
+
+    return () => {
+      controller.abort(); // cancel requests
+    };
   }, []);
 
   return { countries, loading, error };

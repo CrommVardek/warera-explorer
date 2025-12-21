@@ -63,7 +63,7 @@ export const CountryAlliances = ({ countries }: CountryAlliancesProps) => {
 
         AddLabelsToNode(node);
 
-        //Highlight links on hover
+        // Highlight links on hover
         HighlightLinksOnHover(node, link);
 
         // Update positions each tick
@@ -96,7 +96,7 @@ export const CountryAlliances = ({ countries }: CountryAlliancesProps) => {
         }
 
         return () => {
-            simulation.stop();  // <-- THIS is the correct cleanup
+            simulation.stop(); // Cleanup
         }
     }, [countries]);
 
