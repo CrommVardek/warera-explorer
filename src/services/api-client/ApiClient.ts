@@ -1,10 +1,17 @@
 import axios, { type AxiosRequestConfig } from "axios";
-import type { CountriesResponse } from "./Types";
+import type { CountriesResponse, MilitaryUnitsReponse } from "./Types";
+import type { MilitaryUnit } from "../../models/mu/MilitaryUnit";
 
 const api = axios.create({
   baseURL: "https://api2.warera.io/trpc",
   timeout: 10000,
 });
+
+interface tRpcResponse<T> {
+  data: T;
+}
+
+const PAGE_LIMIT = 100;
 
 /**
  * Fetch all countries from Warera API
@@ -20,4 +27,34 @@ export async function getAllCountries(
 
 export default {
   getAllCountries,
+};
+
+/**
+ * Fetch all MU from Warera API
+ */
+export const getAllMilitaryUnits = async (
+  config?: AxiosRequestConfig<any> | undefined
+): Promise<MilitaryUnit[]> => {
+  let cursor: string | undefined = undefined;
+  const militaryUnits: MilitaryUnit[] = [];
+
+  do {
+    const response = await api.get("/mu.getManyPaginated", {
+      ...config,
+      params: {
+        input: JSON.stringify({
+          limit: PAGE_LIMIT,
+          ...(cursor && { cursor }),
+        }),
+      },
+    });
+
+    const dataResponse = response.data as unknown as MilitaryUnitsReponse;
+
+    militaryUnits.push(...dataResponse.result.data.items);
+
+    cursor = dataResponse.result.data.nextCursor;
+  } while (cursor);
+
+  return militaryUnits;
 };

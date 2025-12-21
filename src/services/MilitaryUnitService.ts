@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { getAllCountries } from "./api-client/ApiClient";
-import type { Country } from "../models/country/Country";
+import { getAllMilitaryUnits } from "./api-client/ApiClient";
+import type { MilitaryUnit } from "../models/mu/MilitaryUnit";
 
-export const useCountries = () => {
-  const [countries, setCountries] = useState<Country[]>([]);
+export const useMilitaryUnits = () => {
+  const [militaryUnits, setMilitaryUnits] = useState<MilitaryUnit[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<unknown>(null);
 
@@ -13,8 +13,8 @@ export const useCountries = () => {
 
     (async () => {
       try {
-        const resp = await getAllCountries({ signal });
-        setCountries(resp.result.data);
+        const resp = await getAllMilitaryUnits({ signal });
+        setMilitaryUnits(resp);
       } catch (err) {
         if (!signal.aborted) {
           setError(err);
@@ -31,5 +31,5 @@ export const useCountries = () => {
     };
   }, []);
 
-  return { countries, loading, error };
+  return { militaryUnits, loading, error };
 };
