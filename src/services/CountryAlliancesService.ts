@@ -5,11 +5,15 @@ import type {
 import type { Country } from "../models/country/Country";
 
 export const buildAllianceGraph = (countries: Country[]) => {
-  const nodes: GraphNode[] = countries.map((c) => ({
-    id: c._id,
-    label: c.name,
-    color: c.scheme,
-  }));
+  const nodes: GraphNode[] = countries.map(
+    (c) =>
+      ({
+        id: c._id,
+        label: c.name,
+        color: c.scheme,
+        options: { radius: 15 + c.allies.length * 2 },
+      } as GraphNode)
+  );
 
   const nodeIds = new Set(nodes.map((n) => n.id));
 

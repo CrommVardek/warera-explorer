@@ -6,7 +6,7 @@ import { CountriesWarsPage } from "../components/pages/country-wars/CountriesWar
 export const router = createBrowserRouter(
     createRoutesFromElements(
         <Route element={<App />} >
-            <Route path="/" element={<div>Home Page</div>} />
+            <Route path="/" element={<CountriesAlliancesPage />} />
             <Route path="/alliances" element={<CountriesAlliancesPage />} />
             <Route path="/wars" element={<CountriesWarsPage />} />
         </Route>

@@ -9,6 +9,9 @@ export const buildWarGraph = (countries: Country[]) => {
     id: c._id,
     label: c.name,
     color: c.scheme,
+    options: {
+      radius: 15 + Math.min(40, (c.warsWith.length + (c.enemy ? 1 : 0)) * 2),
+    },
   }));
 
   const nodeIds = new Set(nodes.map((n) => n.id));
