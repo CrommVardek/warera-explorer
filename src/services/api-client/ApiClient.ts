@@ -58,3 +58,21 @@ export const getAllMilitaryUnits = async (
 
   return militaryUnits;
 };
+
+export const getUsers = async (
+  userIds: string[],
+  config?: AxiosRequestConfig<any> | undefined
+): Promise<any> => {
+    userIds.forEach(async (userId) => {
+      const response = await api.get("/user.getUserLite", {
+      ...config,
+      params: {
+        input: JSON.stringify({
+          userId,
+        }),
+      },
+      });
+      console.log(response);
+    });
+  return;
+}

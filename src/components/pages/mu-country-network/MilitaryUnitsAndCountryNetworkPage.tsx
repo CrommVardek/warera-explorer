@@ -1,5 +1,6 @@
 import { useCountries } from "../../../services/CountryService";
 import { useMilitaryUnits } from "../../../services/MilitaryUnitService";
+import { useUsers } from "../../../services/UserService";
 
 export const MilitaryUnitsAndCountryNetworkPage = () => {
 
@@ -7,10 +8,12 @@ export const MilitaryUnitsAndCountryNetworkPage = () => {
 
     const { militaryUnits, loading: muLoading } = useMilitaryUnits();
 
-    console.log({ countries, militaryUnits });
+    const { users, loading: usersLoading } = useUsers(militaryUnits.map(mu => mu.members).flat())
+
+    console.log({ countries, militaryUnits, users });
 
     return (
-        (loading || muLoading) ? <p>Loading…</p> :
+        (loading || muLoading || usersLoading) ? <p>Loading…</p> :
             <div>
                 <h1>MU with Countries Network</h1>
             </div>

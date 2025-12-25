@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 import "./Header.css";
-import { alliancePath, warsPath } from "../../routes/RoutePath";
+import { alliancePath, muCountriesPath, warsPath } from "../../routes/RoutePath";
 
 export const Header = () => {
     const navigate = useNavigate();
@@ -11,6 +11,7 @@ export const Header = () => {
             <nav className="nav-bar">
                 <a className="nav-item" onClick={() => navigate(alliancePath)}>Alliances</a>
                 <a className="nav-item" onClick={() => navigate(warsPath)}>Wars</a>
+                <a className="nav-item" onClick={() => navigate(muCountriesPath)}>MU x Countries</a>
             </nav>
         </header>
     );

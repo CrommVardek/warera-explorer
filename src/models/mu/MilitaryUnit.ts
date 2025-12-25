@@ -4,7 +4,7 @@ export interface MilitaryUnit {
   user: string;
   region: string;
   name: string;
-  members: unknown[];
+  members: string[];
   createdAt: string;
   updatedAt: string;
   __v: number;
@@ -15,7 +15,7 @@ export interface MilitaryUnit {
 
 export interface Roles {
   managers: string[];
-  commanders: unknown[];
+  commanders: string[];
 }
 
 export interface ActiveUpgradeLevels {
