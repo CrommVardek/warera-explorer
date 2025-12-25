@@ -1,6 +1,7 @@
 import axios, { type AxiosRequestConfig } from "axios";
-import type { CountriesResponse, MilitaryUnitsReponse } from "./Types";
+import type { CountriesResponse, MilitaryUnitsReponse, UserResponse } from "./Types";
 import type { MilitaryUnit } from "../../models/mu/MilitaryUnit";
+import type { User } from "../../models/user/User";
 
 const api = axios.create({
   baseURL: "https://api2.warera.io/trpc",
@@ -63,16 +64,20 @@ export const getUsers = async (
   userIds: string[],
   config?: AxiosRequestConfig<any> | undefined
 ): Promise<any> => {
-    userIds.forEach(async (userId) => {
-      const response = await api.get("/user.getUserLite", {
-      ...config,
-      params: {
-        input: JSON.stringify({
-          userId,
-        }),
-      },
-      });
-      console.log(response);
+
+  const users: User[] = []
+  userIds.forEach(async (userId) => {
+    const response = await api.get("/user.getUserLite", {
+    ...config,
+    params: {
+      input: JSON.stringify({
+        userId,
+      }),
+    },
     });
+    const dataResponse = response.data as unknown as UserResponse;
+
+    users.push(dataResponse.result.data);
+  });
   return;
 }

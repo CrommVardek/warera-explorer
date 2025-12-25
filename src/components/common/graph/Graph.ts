@@ -3,6 +3,7 @@ export interface GraphNode {
   label: string;
   color?: string;
   options?: GraphNodeOptions;
+  imgUrl?: string;
 }
 
 export interface GraphRelationship {

@@ -1,5 +1,6 @@
 import type { Country } from "../../models/country/Country";
 import type { MilitaryUnit } from "../../models/mu/MilitaryUnit";
+import type { User } from "../../models/user/User";
 
 export interface CountriesResponse {
   result: {
@@ -13,5 +14,11 @@ export interface MilitaryUnitsReponse {
       items: MilitaryUnit[];
       nextCursor?: string | undefined;
     };
+  };
+}
+
+export interface UserResponse {
+  result: {
+    data: User;
   };
 }
