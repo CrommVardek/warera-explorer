@@ -1,16 +1,22 @@
-import axios from "axios";
-import type { CountriesResponse } from "./Types";
+import axios, { type AxiosRequestConfig } from "axios";
+import type { CountriesResponse, MilitaryUnitsReponse, UserResponse } from "./Types";
+import type { MilitaryUnit } from "../../models/mu/MilitaryUnit";
+import type { User } from "../../models/user/User";
 
 const api = axios.create({
   baseURL: "https://api2.warera.io/trpc",
   timeout: 10000,
 });
 
+const PAGE_LIMIT = 100;
+
 /**
  * Fetch all countries from Warera API
  */
-export async function getAllCountries(): Promise<CountriesResponse> {
-  const response = await api.get("/country.getAllCountries");
+export async function getAllCountries(
+  config?: AxiosRequestConfig<any> | undefined
+): Promise<CountriesResponse> {
+  const response = await api.get("/country.getAllCountries", config);
 
   // TRPC embeds the result under .data.result.data
   return response.data as CountriesResponse;
@@ -19,3 +25,55 @@ export async function getAllCountries(): Promise<CountriesResponse> {
 export default {
   getAllCountries,
 };
+
+/**
+ * Fetch all MU from Warera API
+ */
+export const getAllMilitaryUnits = async (
+  config?: AxiosRequestConfig<any> | undefined
+): Promise<MilitaryUnit[]> => {
+  let cursor: string | undefined = undefined;
+  const militaryUnits: MilitaryUnit[] = [];
+
+  do {
+    const response = await api.get("/mu.getManyPaginated", {
+      ...config,
+      params: {
+        input: JSON.stringify({
+          limit: PAGE_LIMIT,
+          ...(cursor && { cursor }),
+        }),
+      },
+    });
+
+    const dataResponse = response.data as unknown as MilitaryUnitsReponse;
+
+    militaryUnits.push(...dataResponse.result.data.items);
+
+    cursor = dataResponse.result.data.nextCursor;
+  } while (cursor);
+
+  return militaryUnits;
+};
+
+export const getUsers = async (
+  userIds: string[],
+  config?: AxiosRequestConfig<any> | undefined
+): Promise<any> => {
+
+  const users: User[] = []
+  userIds.forEach(async (userId) => {
+    const response = await api.get("/user.getUserLite", {
+    ...config,
+    params: {
+      input: JSON.stringify({
+        userId,
+      }),
+    },
+    });
+    const dataResponse = response.data as unknown as UserResponse;
+
+    users.push(dataResponse.result.data);
+  });
+  return users;
+}

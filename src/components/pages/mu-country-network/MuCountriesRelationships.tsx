@@ -2,18 +2,31 @@ import { useEffect, useRef } from "react";
 import * as d3 from "d3";
 
 import type { Country } from "../../../models/country/Country";
-import { buildAllianceGraph } from "../../../services/CountryAlliancesService";
 import { AddCircleToNode, AddLabelsToNode, HighlightLinksOnHover } from "../../common/graph/GraphBuilderUtils";
+import type { MilitaryUnit } from "../../../models/mu/MilitaryUnit";
+import type { User } from "../../../models/user/User";
+import { buildMuCountriesGraph } from "../../../services/MilitaryUnitsGraphService";
 
-interface CountryAlliancesProps { countries: Country[] }
+interface MuCountriesRelationshipsProps {
+    countries: Country[];
+    militaryUnits: MilitaryUnit[];
+    users: User[]
+}
 
-export const CountryAlliances = ({ countries }: CountryAlliancesProps) => {
+export const MuCountriesRelationships = ({ militaryUnits, countries, users }: MuCountriesRelationshipsProps) => {
     const svgRef = useRef<SVGSVGElement | null>(null);
 
     const zoomGroupRef = useRef<SVGGElement | null>(null);
 
     useEffect(() => {
-        const { nodes, edges } = buildAllianceGraph(countries);
+        if (militaryUnits === undefined ||
+            militaryUnits?.length === 0 ||
+            countries === undefined ||
+            countries?.length === 0 ||
+            users === undefined ||
+            users?.length === 0) return;
+        
+        const { nodes, edges } = buildMuCountriesGraph(militaryUnits, countries, users);
 
         const svg = d3.select<SVGSVGElement, unknown>(svgRef.current!);
         svg.selectAll("*").remove(); // clear previous graph
@@ -35,7 +48,7 @@ export const CountryAlliances = ({ countries }: CountryAlliancesProps) => {
             .force("charge", d3.forceManyBody().strength(-1000))
             .force("center", d3.forceCenter(1200 / 2, 800 / 2));
 
-        // Lines for alliances
+        // Lines for wars
         const link = zoomGroup
             .append("g")
             .attr("stroke", "#999")
@@ -63,7 +76,7 @@ export const CountryAlliances = ({ countries }: CountryAlliancesProps) => {
 
         AddLabelsToNode(node);
 
-        // Highlight links on hover
+        //Highlight links on hover
         HighlightLinksOnHover(node, link);
 
         // Update positions each tick
@@ -96,9 +109,9 @@ export const CountryAlliances = ({ countries }: CountryAlliancesProps) => {
         }
 
         return () => {
-            simulation.stop(); // Cleanup
+            simulation.stop();  // <-- THIS is the correct cleanup
         }
-    }, [countries]);
+    }, [countries, militaryUnits, users]);
 
     return (
         <svg

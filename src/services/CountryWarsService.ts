@@ -3,12 +3,13 @@ import type {
   GraphRelationship,
 } from "../components/common/graph/Graph";
 import type { Country } from "../models/country/Country";
+import { warEraColorToHex } from "../utils/colorUtils";
 
 export const buildWarGraph = (countries: Country[]) => {
   const nodes: GraphNode[] = countries.map((c) => ({
     id: c._id,
     label: c.name,
-    color: c.scheme,
+    color: warEraColorToHex(c.scheme),
     options: {
       radius: 15 + Math.min(40, (c.warsWith.length + (c.enemy ? 1 : 0)) * 2),
     },

@@ -1,4 +1,6 @@
+import { adjustColorForBackground } from "../../../utils/colorUtils";
 import type { GraphNode, GraphRelationship } from "./Graph";
+import { color } from "d3";
 
 export const AddLabelsToNode = (
   nodeSelection: d3.Selection<SVGGElement, GraphNode, SVGGElement, any>
@@ -7,10 +9,15 @@ export const AddLabelsToNode = (
     .style("font-weight", "bold")
     .append("text")
     .text((d) => d.label)
-    .attr("x", 18)
-    .attr("y", 4)
-    .style("font-size", "16px")
-    .style("font-family", "sans-serif");
+    .attr("text-anchor", "middle") // Center horizontally
+    .attr("alignment-baseline", "central") // Center vertically
+    .attr("fill", (d) => {
+      return d.color !== undefined && color(d.color)
+        ? adjustColorForBackground(color(d.color)!)!
+        : "#000";
+    })
+    .style("font-size", "18px")
+    .style("font-family", "Segoe UI");
 };
 
 export const AddCircleToNode = (
@@ -34,6 +41,11 @@ export const HighlightLinksOnHover = (
   nodeSelection.on("mouseover", (_, d) => {
     link.attr("stroke-width", (l: any) =>
       l.source.id === d.id || l.target.id === d.id ? 5 : 2
+    );
+    link.attr("stroke", (l: any) =>
+      (l.source.id === d.id || l.target.id === d.id) && d.color !== undefined
+        ? d.color
+        : "#999"
     );
   });
 };

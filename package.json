@@ -1,13 +1,15 @@
 {
   "name": "warera-explorer",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "start": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate-api": "openapi-generator-cli generate --input-spec https://api2.warera.io/openapi.json -g typescript-axios --output src/services/api-fetcher --additional-properties=supportsES6=true,typescriptThreePlus=true && npm run clean:generated-api",
+    "clean:generated-api": "rimraf ./src/services/api-fetcher/.openapi-generator  ./src/services/api-fetcher/.openapi-generator-ignore ./src/services/api-fetcher/.npmignore ./src/services/api-fetcher/.gitignore ./src/services/api-fetcher/git_push.sh src/services/api-fetcher/docs"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -22,6 +24,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@openapitools/openapi-generator-cli": "^2.26.0",
     "@types/d3": "^7.4.3",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.5",
@@ -33,6 +36,7 @@
     "eslint-plugin-react-refresh": "^0.4.24",
     "eslint-plugin-react-x": "^2.3.13",
     "globals": "^16.5.0",
+    "rimraf": "^6.1.2",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
     "vite": "^7.2.4"

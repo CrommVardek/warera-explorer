@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { getAllCountries } from "./api-client/ApiClient";
-import type { Country } from "../models/country/Country";
+import { getUsers } from "./api-client/ApiClient";
+import type { User } from "../models/user/User";
 
-export const useCountries = () => {
-  const [countries, setCountries] = useState<Country[]>([]);
+export const useUsers = (userIds: string[]) => {
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<unknown>(null);
 
@@ -13,8 +13,8 @@ export const useCountries = () => {
 
     (async () => {
       try {
-        const resp = await getAllCountries({ signal });
-        setCountries(resp.result.data);
+        const resp = await getUsers(userIds, { signal });
+        setUsers(resp);
       } catch (err) {
         if (!signal.aborted) {
           setError(err);
@@ -29,7 +29,7 @@ export const useCountries = () => {
     return () => {
       controller.abort(); // cancel requests
     };
-  }, []);
+  }, [userIds]);
 
-  return { countries, loading, error };
+  return { users, loading, error };
 };
