@@ -8,10 +8,6 @@ const api = axios.create({
   timeout: 10000,
 });
 
-interface tRpcResponse<T> {
-  data: T;
-}
-
 const PAGE_LIMIT = 100;
 
 /**
@@ -79,5 +75,5 @@ export const getUsers = async (
 
     users.push(dataResponse.result.data);
   });
-  return;
+  return users;
 }

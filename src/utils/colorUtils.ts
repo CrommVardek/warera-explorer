@@ -1,4 +1,4 @@
-import { color, type HSLColor, type RGBColor } from "d3";
+import { type HSLColor, type RGBColor } from "d3";
 
 // Function to determine if a color is light or dark (based on YIQ luminance)
 const getBrightness = (hexcolor: string): boolean => {

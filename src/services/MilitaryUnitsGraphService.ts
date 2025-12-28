@@ -1,4 +1,4 @@
-import type { GraphNode } from "../components/common/graph/Graph";
+import type { GraphNode, GraphRelationship } from "../components/common/graph/Graph";
 import type { Country } from "../models/country/Country";
 import type { MilitaryUnit } from "../models/mu/MilitaryUnit";
 import type { User } from "../models/user/User";
@@ -29,4 +29,33 @@ export const buildMuCountriesGraph = (militaryUnits: MilitaryUnit[], countries: 
 
     const nodeIds = new Set(nodes.map((n) => n.id));
 
+    const edges: GraphRelationship[] = [];
+    const seen = new Set<string>();
+    
+    for (const mu of militaryUnits) {
+          
+        const muCountries = [...new Set(mu.members
+            .map(m => users?.find(u => u._id === m))
+            .map(u => u?.country)
+            .filter(c => c !== undefined)
+        )];
+
+        for (const countryId of muCountries) {
+          // Skip if country does not exist in nodes
+            if (!nodeIds.has(countryId)) continue;
+    
+          const a = `${mu._id}-${countryId}`;
+          const b = `${countryId}-${mu._id}`;
+          if (seen.has(a) || seen.has(b)) continue;
+
+          seen.add(a);
+            seen.add(b);
+            
+            const numberOfMembers = mu.members.map(m => users?.find(u => u._id === m)).filter(u => u?.country === countryId).length;
+    
+          edges.push({ id: a, source: mu._id, target: countryId, graphRelationshipOptions: { label: numberOfMembers.toString()} } as GraphRelationship);
+        }
+    }
+    
+    return { nodes, edges };
 }

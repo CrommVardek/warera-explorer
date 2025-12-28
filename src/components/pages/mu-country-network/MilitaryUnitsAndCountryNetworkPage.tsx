@@ -1,6 +1,8 @@
+import { useMemo } from "react";
 import { useCountries } from "../../../services/CountryService";
 import { useMilitaryUnits } from "../../../services/MilitaryUnitService";
 import { useUsers } from "../../../services/UserService";
+import { MuCountriesRelationships } from "./MuCountriesRelationships";
 
 export const MilitaryUnitsAndCountryNetworkPage = () => {
 
@@ -8,7 +10,11 @@ export const MilitaryUnitsAndCountryNetworkPage = () => {
 
     const { militaryUnits, loading: muLoading } = useMilitaryUnits();
 
-    const { users, loading: usersLoading } = useUsers(militaryUnits.map(mu => mu.members).flat())
+    const muMembersId = useMemo(() => {
+        return militaryUnits.map(mu => mu.members).flat();
+    }, [militaryUnits]);
+
+    const { users, loading: usersLoading } = useUsers(muMembersId)
 
     console.log({ countries, militaryUnits, users });
 
@@ -16,6 +22,7 @@ export const MilitaryUnitsAndCountryNetworkPage = () => {
         (loading || muLoading || usersLoading) ? <p>Loading…</p> :
             <div>
                 <h1>MU with Countries Network</h1>
+                <MuCountriesRelationships countries={countries} militaryUnits={militaryUnits}  users={users}/>
             </div>
     );
 }
