@@ -16,13 +16,12 @@ export const MilitaryUnitsAndCountryNetworkPage = () => {
 
     const { users, loading: usersLoading } = useUsers(muMembersId)
 
-    console.log({ countries, militaryUnits, users });
 
     return (
         (loading || muLoading || usersLoading) ? <p>Loading…</p> :
             <div>
                 <h1>MU with Countries Network</h1>
-                <MuCountriesRelationships countries={countries} militaryUnits={militaryUnits}  users={users}/>
+                <MuCountriesRelationships countries={countries} militaryUnits={militaryUnits} users={users} />
             </div>
     );
 }

@@ -72,15 +72,11 @@ export const getUsers = async (
 ): Promise<User[]> => {
   const users: User[] = [];
 
-  console.log(`Fetching ${userIds.length} users in batches of ${BATCH_LIMIT}`);
-
   // Split userIds into batches of BATCH_LIMIT
   const batches: string[][] = [];
   for (let i = 0; i < userIds.length; i += BATCH_LIMIT) {
     batches.push(userIds.slice(i, i + BATCH_LIMIT));
   }
-
-  console.log(`Total batches to process: ${batches.length}`);
 
   // Process each batch
   for (const batch of batches) {
@@ -102,8 +98,6 @@ export const getUsers = async (
         input: JSON.stringify(batchInput),
       },
     });
-
-    console.log(response);
 
     const dataResponse = response.data as unknown as UserResponse[];
 
