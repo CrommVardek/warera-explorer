@@ -1,6 +1,6 @@
 import { adjustColorForBackground } from "../../../utils/colorUtils";
 import type { GraphNode, GraphRelationship } from "./Graph";
-import { color } from "d3";
+import { color, select } from "d3";
 
 export const AddLabelsToNode = (
   nodeSelection: d3.Selection<SVGGElement, GraphNode, SVGGElement, any>
@@ -47,5 +47,38 @@ export const HighlightLinksOnHover = (
         ? d.color
         : "#999"
     );
+  });
+};
+
+export const AddImagePatternOrCircleToNode = (
+  node: d3.Selection<SVGGElement, GraphNode, SVGGElement, any>
+) => {
+  node.each(function (this: SVGGElement, d: GraphNode) {
+    const currentNode = select(this);
+
+    if (d.imgUrl) {
+      const defs = currentNode.append("defs");
+      const pattern = defs
+        .append("pattern")
+        .attr("id", `pattern-${d.id}`)
+        .attr("height", 1)
+        .attr("width", 1)
+        .attr("patternContentUnits", "objectBoundingBox");
+
+      pattern
+        .append("image")
+        .attr("xlink:href", d.imgUrl)
+        .attr("href", d.imgUrl) // Modern browsers use 'href' instead of 'xlink:href'
+        .attr("height", 1)
+        .attr("width", 1)
+        .attr("preserveAspectRatio", "xMidYMid slice");
+
+      currentNode
+        .append("circle")
+        .attr("r", d.options?.radius || 10)
+        .attr("fill", `url(#pattern-${d.id})`);
+    } else {
+      AddCircleToNode(node);
+    }
   });
 };

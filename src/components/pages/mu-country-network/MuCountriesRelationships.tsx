@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import * as d3 from "d3";
 
 import type { Country } from "../../../models/country/Country";
-import { AddCircleToNode, AddLabelsToNode, HighlightLinksOnHover } from "../../common/graph/GraphBuilderUtils";
+import { AddImagePatternOrCircleToNode, AddLabelsToNode, HighlightLinksOnHover } from "../../common/graph/GraphBuilderUtils";
 import type { MilitaryUnit } from "../../../models/mu/MilitaryUnit";
 import type { User } from "../../../models/user/User";
 import { buildMuCountriesGraph } from "../../../services/MilitaryUnitsGraphService";
@@ -25,7 +25,7 @@ export const MuCountriesRelationships = ({ militaryUnits, countries, users }: Mu
             countries?.length === 0 ||
             users === undefined ||
             users?.length === 0) return;
-        
+
         const { nodes, edges } = buildMuCountriesGraph(militaryUnits, countries, users);
 
         const svg = d3.select<SVGSVGElement, unknown>(svgRef.current!);
@@ -72,15 +72,18 @@ export const MuCountriesRelationships = ({ militaryUnits, countries, users }: Mu
             );
 
 
-        AddCircleToNode(node);
+        AddImagePatternOrCircleToNode(node);
 
         AddLabelsToNode(node);
 
         //Highlight links on hover
         HighlightLinksOnHover(node, link);
 
-        // Update positions each tick
+        let lastUpdateTime = 0;
         simulation.on("tick", () => {
+            const now = Date.now();
+            if (now - lastUpdateTime < 30) return; // Throttle to ~30 FPS
+            lastUpdateTime = now;
             link
                 .attr("x1", (d: any) => d.source.x)
                 .attr("y1", (d: any) => d.source.y)
