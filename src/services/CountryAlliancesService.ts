@@ -6,10 +6,6 @@ import type { Country } from "../models/country/Country";
 import { warEraColorToHex } from "../utils/colorUtils";
 
 export const buildAllianceGraph = (countries: Country[]) => {
-  console.log(
-    "distinct colors",
-    countries.map((c) => c.scheme).filter((v, i, a) => a.indexOf(v) === i)
-  );
   const nodes: GraphNode[] = countries.map(
     (c) =>
       ({
