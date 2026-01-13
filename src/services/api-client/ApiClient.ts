@@ -62,6 +62,10 @@ export const getAllMilitaryUnits = async (
   return militaryUnits;
 };
 
+/**
+ * Fetch all Users with a valid userId from Warera API
+ * @param userIds Array of user IDs to fetch
+ */
 export const getUsers = async (
   userIds: string[],
   config?: AxiosRequestConfig<any> | undefined

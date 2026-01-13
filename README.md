@@ -13,3 +13,7 @@ Install:
 
 Run in local:
 `npm run start`
+
+## About WarEra API
+
+Don't trust the WarEra open api specs. Hopefully they adapt it one day.
