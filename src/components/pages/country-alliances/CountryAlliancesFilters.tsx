@@ -1,27 +1,41 @@
-import { Box, Slider } from "@mui/material"
-import { useCallback } from "react";
 
 interface CountryAlliancesFiltersProps {
     minAllies: number;
     maxAllies: number;
-    onAlliesRangeChange: (min: number, max: number) => void;
+    handleMinChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    handleMaxChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    minLimitAllies?: number;
+    maxLimitAllies?: number;
 }
 
-export const CountryAlliancesFilters = ({ minAllies, maxAllies, onAlliesRangeChange }: CountryAlliancesFiltersProps) => {
-
-    const handleChange = useCallback((_: Event, newValue: number | number[]) => {
-        if (Array.isArray(newValue)) {
-            onAlliesRangeChange(newValue[0], newValue[1]);
-        }
-    }, []);
+export const CountryAlliancesFilters = ({ minAllies, maxAllies, handleMinChange, handleMaxChange, minLimitAllies, maxLimitAllies }: CountryAlliancesFiltersProps) => {
 
     return (
-        <Box sx={{ width: 300, marginBottom: 4 }}>
-            <Slider
-                getAriaLabel={() => 'Number of allies range'}
-                value={[minAllies, maxAllies]}
-                onChange={handleChange}
-                valueLabelDisplay="auto"
-            />
-        </Box>);
+        <div style={{ marginBottom: "20px", display: "flex", gap: "10px" }}>
+            <div>
+                <label htmlFor="minAllies">Min Allies:</label>
+                <input
+                    type="number"
+                    id="minAllies"
+                    value={minAllies}
+                    onChange={handleMinChange}
+                    min={minLimitAllies}
+                    max={maxLimitAllies}
+                    style={{ marginLeft: "5px", padding: "5px" }}
+                />
+            </div>
+            <div>
+                <label htmlFor="maxAllies">Max Allies:</label>
+                <input
+                    type="number"
+                    id="maxAllies"
+                    value={maxAllies}
+                    onChange={handleMaxChange}
+                    min={minLimitAllies}
+                    max={maxLimitAllies}
+                    style={{ marginLeft: "5px", padding: "5px" }}
+                />
+            </div>
+        </div>
+    );
 }
