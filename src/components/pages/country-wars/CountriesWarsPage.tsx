@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "rea
 import { useCountries } from "../../../services/CountryService";
 import { CountryWars } from "./CountryWars";
 import { CountryWarsFilters } from "./CountryWarsFilters";
+import { LoadingSpinner } from "../../common/LoadingSpinner";
 
 export const CountriesWarsPage = () => {
   const { countries, loading } = useCountries();
@@ -47,7 +48,7 @@ export const CountriesWarsPage = () => {
       .filter(c => c.warsWith.length + (c.enemy ? 1 : 0) <= maxNumberOfWars);
   }, [countries, selectedCountryId, minNumberOfWars, maxNumberOfWars]);
 
-  if (loading) return <p>Loading…</p>;
+  if (loading) return <LoadingSpinner />;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>

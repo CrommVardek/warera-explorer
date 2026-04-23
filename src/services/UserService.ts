@@ -2,12 +2,18 @@ import { useEffect, useState } from "react";
 import { getUsers } from "./api-client/ApiClient";
 import type { User } from "../models/user/User";
 
-export const useUsers = (userIds: string[]) => {
+interface UseUsersOptions {
+  enabled?: boolean;
+}
+
+export const useUsers = (userIds: string[], { enabled = true }: UseUsersOptions = {}) => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<unknown>(null);
 
   useEffect(() => {
+    if (!enabled) return;
+
     const controller = new AbortController();
     const { signal } = controller;
 
@@ -27,9 +33,9 @@ export const useUsers = (userIds: string[]) => {
     })();
 
     return () => {
-      controller.abort(); // cancel requests
+      controller.abort();
     };
-  }, [userIds]);
+  }, [enabled, userIds]);
 
   return { users, loading, error };
 };

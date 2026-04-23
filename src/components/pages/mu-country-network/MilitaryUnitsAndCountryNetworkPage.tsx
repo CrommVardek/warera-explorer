@@ -1,20 +1,29 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useCountries } from "../../../services/CountryService";
 import { useMilitaryUnits } from "../../../services/MilitaryUnitService";
 import { useUsers } from "../../../services/UserService";
 import { MuCountriesRelationships } from "./MuCountriesRelationships";
 import { MuCountriesFilters } from "./MuCountriesFilters";
+import { ApiTokenDialog } from "../../common/ApiTokenDialog";
+import { useApiToken } from "../../../hooks/useApiToken";
+import { setApiKey } from "../../../services/api-client/ApiClient";
+import { LoadingSpinner } from "../../common/LoadingSpinner";
 
 export const MilitaryUnitsAndCountryNetworkPage = () => {
+    const { token, showDialog, ready, confirm } = useApiToken();
+
+    useEffect(() => {
+        setApiKey(token);
+    }, [token]);
 
     const { countries, loading } = useCountries();
-    const { militaryUnits, loading: muLoading } = useMilitaryUnits();
+    const { militaryUnits, loading: muLoading } = useMilitaryUnits({ enabled: ready });
 
     const muMembersId = useMemo(() => {
         return militaryUnits.map(mu => mu.members).flat();
     }, [militaryUnits]);
 
-    const { users, loading: usersLoading } = useUsers(muMembersId);
+    const { users, loading: usersLoading } = useUsers(muMembersId, { enabled: ready && muMembersId.length > 0 });
 
     const [selectedCountryId, setSelectedCountryId] = useState<string | null>(null);
     const [selectedMuId, setSelectedMuId] = useState<string | null>(null);
@@ -50,18 +59,22 @@ export const MilitaryUnitsAndCountryNetworkPage = () => {
     }, [militaryUnits, selectedCountryId, selectedMuId, muCountryLinks]);
 
     return (
-        (loading || muLoading || usersLoading) ? <p>Loading…</p> :
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                <h1>MU with Countries Network</h1>
-                <MuCountriesFilters
-                    countries={countries}
-                    militaryUnits={militaryUnits}
-                    selectedCountryId={selectedCountryId}
-                    selectedMuId={selectedMuId}
-                    onCountryChange={setSelectedCountryId}
-                    onMuChange={setSelectedMuId}
-                />
-                <MuCountriesRelationships countries={filteredCountries} militaryUnits={filteredMUs} users={users} />
-            </div>
+        <>
+            {showDialog && <ApiTokenDialog onConfirm={confirm} />}
+            {(loading || muLoading || usersLoading) ? <LoadingSpinner /> :
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    <h1>MU with Countries Network</h1>
+                    <MuCountriesFilters
+                        countries={countries}
+                        militaryUnits={militaryUnits}
+                        selectedCountryId={selectedCountryId}
+                        selectedMuId={selectedMuId}
+                        onCountryChange={setSelectedCountryId}
+                        onMuChange={setSelectedMuId}
+                    />
+                    <MuCountriesRelationships countries={filteredCountries} militaryUnits={filteredMUs} users={users} />
+                </div>
+            }
+        </>
     );
 }

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "rea
 import { useCountries } from "../../../services/CountryService";
 import { CountryAlliances } from "./CountryAlliances";
 import { CountryAlliancesFilters } from "./CountryAlliancesFilters";
+import { LoadingSpinner } from "../../common/LoadingSpinner";
 
 export const CountriesAlliancesPage = () => {
   const { countries, loading } = useCountries();
@@ -47,7 +48,7 @@ export const CountriesAlliancesPage = () => {
       .filter(c => c.allies.length <= maxNumberOfAllies);
   }, [countries, selectedCountryId, minNumberOfAllies, maxNumberOfAllies]);
 
-  if (loading) return <p>Loading…</p>;
+  if (loading) return <LoadingSpinner />;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
