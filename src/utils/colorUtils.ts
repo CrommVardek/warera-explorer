@@ -29,46 +29,50 @@ export const adjustColorForBackground = (
 
 export const warEraColorToHex = (warEraColor: string): string => {
   switch (warEraColor) {
-    case "yellow":
-      return "#FFFF00";
-    case "red":
-      return "#FF0000";
+    case "amber":
+      return "#FFBF00";
     case "blue":
       return "#0066ffff";
+    case "brown":
+      return "#A52A2A";
+    case "cyan":
+      return "#00FFFF";
+    case "emerald":
+      return "#50C878";
+    case "deepOrange":
+      return "#FF8C00";
+    case "deepPink":
+      return "#FF1493";
+    case "gray":
+      return "#808080";
+    case "green":
+      return "#008000";
+    case "indigo":
+      return "#7100c2ff";
     case "lightBlue":
       return "#ADD8E6";
     case "lightGreen":
       return "#90EE90";
-    case "amber":
-      return "#FFBF00";
+    case "lightOrange":
+      return "#FFA726";
+    case "lime":
+      return "#00FF00";
+    case "olive":
+      return "#808000";
     case "orange":
       return "#FFA500";
     case "pink":
       return "#FFC0CB";
-    case "lime":
-      return "#00FF00";
-    case "gray":
-      return "#808080";
-    case "teal":
-      return "#008080";
-    case "green":
-      return "#008000";
     case "purple":
       return "#920092ff";
-    case "lightOrange":
-      return "#FFA726";
-    case "brown":
-      return "#A52A2A";
-    case "indigo":
-      return "#7100c2ff";
-    case "cyan":
-      return "#00FFFF";
-    case "deepPink":
-      return "#FF1493";
-    case "deepOrange":
-      return "#FF8C00";
-    case "olive":
-      return "#808000";
+    case "red":
+      return "#FF0000";
+    case "sand":
+      return "#C2B280";
+    case "teal":
+      return "#008080";
+    case "yellow":
+      return "#FFFF00";
     default:
       return warEraColor;
   }
