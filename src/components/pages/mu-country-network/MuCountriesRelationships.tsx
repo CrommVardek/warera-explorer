@@ -45,8 +45,9 @@ export const MuCountriesRelationships = ({ militaryUnits, countries, users }: Mu
         const simulation = d3
             .forceSimulation(nodes as any)
             .force("link", d3.forceLink(edges as any).id((d: any) => d.id).distance(120))
-            .force("charge", d3.forceManyBody().strength(-1000))
-            .force("center", d3.forceCenter(1200 / 2, 800 / 2));
+            .force("charge", d3.forceManyBody().strength(-300))
+            .force("center", d3.forceCenter(1200 / 2, 800 / 2))
+            .alphaDecay(0.05);
 
         // Lines for wars
         const link = zoomGroup

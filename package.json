@@ -1,7 +1,7 @@
 {
   "name": "warera-explorer",
   "private": true,
-  "version": "0.0.2",
+  "version": "0.1",
   "type": "module",
   "scripts": {
     "start": "vite",
@@ -15,7 +15,6 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@fontsource/roboto": "^5.2.9",
-    "@mui/material": "^7.3.6",
     "axios": "^1.13.2",
     "d3": "^7.9.0",
     "react": "^19.2.0",

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 
 import type { Country } from "../../../models/country/Country";
@@ -11,6 +11,8 @@ export const CountryAlliances = ({ countries }: CountryAlliancesProps) => {
     const svgRef = useRef<SVGSVGElement | null>(null);
 
     const zoomGroupRef = useRef<SVGGElement | null>(null);
+
+    const [zoomTransform, setZoomTransform] = useState<d3.ZoomTransform>(d3.zoomIdentity);
 
     useEffect(() => {
         const { nodes, edges } = buildAllianceGraph(countries);
@@ -25,9 +27,16 @@ export const CountryAlliances = ({ countries }: CountryAlliancesProps) => {
             .scaleExtent([0.1, 4])
             .on("zoom", (event) => {
                 zoomGroup.attr("transform", event.transform.toString());
+                setZoomTransform(event.transform);
             });
 
         svg.call(zoom);
+
+        if (zoomTransform) {
+            svg.transition()
+                .duration(400)
+                .call(zoom.transform, zoomTransform);
+        }
 
         const simulation = d3
             .forceSimulation(nodes as any)

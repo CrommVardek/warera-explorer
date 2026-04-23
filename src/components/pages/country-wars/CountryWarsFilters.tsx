@@ -2,16 +2,16 @@ import { useMemo } from "react";
 import type { Country } from "../../../models/country/Country";
 import { SearchableSelect } from "../../common/SearchableSelect";
 
-interface CountryAlliancesFiltersProps {
+interface CountryWarsFiltersProps {
     countries: Country[];
     selectedCountryId: string | null;
     onCountryChange: (id: string | null) => void;
-    minAllies: number;
-    maxAllies: number;
+    minWars: number;
+    maxWars: number;
     handleMinChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     handleMaxChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    minLimitAllies?: number;
-    maxLimitAllies?: number;
+    minLimitWars?: number;
+    maxLimitWars?: number;
 }
 
 const inputStyle: React.CSSProperties = {
@@ -35,7 +35,7 @@ const labelStyle: React.CSSProperties = {
     display: "block",
 };
 
-export const CountryAlliancesFilters = ({ countries, selectedCountryId, onCountryChange, minAllies, maxAllies, handleMinChange, handleMaxChange, minLimitAllies, maxLimitAllies }: CountryAlliancesFiltersProps) => {
+export const CountryWarsFilters = ({ countries, selectedCountryId, onCountryChange, minWars, maxWars, handleMinChange, handleMaxChange, minLimitWars, maxLimitWars }: CountryWarsFiltersProps) => {
     const sortedCountries = useMemo(
         () => [...countries].sort((a, b) => a.name.localeCompare(b.name)).map(c => ({ id: c._id, name: c.name })),
         [countries]
@@ -75,27 +75,27 @@ export const CountryAlliancesFilters = ({ countries, selectedCountryId, onCountr
                 />
             </div>
             <div>
-                <label htmlFor="minAllies" style={labelStyle}>Min Allies</label>
+                <label htmlFor="minWars" style={labelStyle}>Min Wars</label>
                 <input
                     type="number"
-                    id="minAllies"
-                    value={minAllies}
+                    id="minWars"
+                    value={minWars}
                     onChange={handleMinChange}
-                    min={minLimitAllies}
-                    max={maxLimitAllies}
+                    min={minLimitWars}
+                    max={maxLimitWars}
                     style={inputStyle}
                     disabled={selectedCountryId !== null}
                 />
             </div>
             <div>
-                <label htmlFor="maxAllies" style={labelStyle}>Max Allies</label>
+                <label htmlFor="maxWars" style={labelStyle}>Max Wars</label>
                 <input
                     type="number"
-                    id="maxAllies"
-                    value={maxAllies}
+                    id="maxWars"
+                    value={maxWars}
                     onChange={handleMaxChange}
-                    min={minLimitAllies}
-                    max={maxLimitAllies}
+                    min={minLimitWars}
+                    max={maxLimitWars}
                     style={inputStyle}
                     disabled={selectedCountryId !== null}
                 />

@@ -12,6 +12,14 @@ const api = axios.create({
   timeout: 10000,
 });
 
+export const setApiKey = (apiKey: string | null) => {
+  if (apiKey) {
+    api.defaults.headers.common["X-API-Key"] = apiKey;
+  } else {
+    delete api.defaults.headers.common["X-API-Key"];
+  }
+};
+
 const PAGE_LIMIT = 100;
 
 const BATCH_LIMIT = 100;
