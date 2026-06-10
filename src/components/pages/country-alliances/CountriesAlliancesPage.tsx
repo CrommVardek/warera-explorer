@@ -1,70 +1,77 @@
-import { useCallback, useEffect, useMemo, useState, type ChangeEvent } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useCountries } from "../../../services/CountryService";
+import { useAlliances } from "../../../services/AlliancesService";
 import { CountryAlliances } from "./CountryAlliances";
 import { CountryAlliancesFilters } from "./CountryAlliancesFilters";
 import { LoadingSpinner } from "../../common/LoadingSpinner";
 
 export const CountriesAlliancesPage = () => {
-  const { countries, loading } = useCountries();
+  const { countries, loading: loadingCountries } = useCountries();
+  const { alliances, loading: loadingAlliances } = useAlliances(countries);
 
-  const minLimitAllies = 0;
-  const maxLimitAllies = useMemo(() => {
-    return countries.map(c => c.allies.length).reduce((a, b) => Math.max(a, b), 0);
-  }, [countries]);
-
-  useEffect(() => {
-    setMaxNumberOfAllies(maxLimitAllies);
-  }, [maxLimitAllies]);
-
+  const [selectedAllianceId, setSelectedAllianceId] = useState<string | null>(null);
   const [selectedCountryId, setSelectedCountryId] = useState<string | null>(null);
-  const [minNumberOfAllies, setMinNumberOfAllies] = useState(minLimitAllies);
-  const [maxNumberOfAllies, setMaxNumberOfAllies] = useState(maxLimitAllies);
 
-  const handleMinChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    const value = Number(e.target.value);
-    setMinNumberOfAllies(value);
-    if (value > maxNumberOfAllies) {
-      setMaxNumberOfAllies(value);
+  const handleAllianceChange = useCallback((id: string | null) => {
+    setSelectedAllianceId(id);
+    setSelectedCountryId(null);
+  }, []);
+
+  const handleCountryChange = useCallback((id: string | null) => {
+    setSelectedCountryId(id);
+    setSelectedAllianceId(null);
+  }, []);
+
+  const { filteredAlliances, filteredCountries } = useMemo(() => {
+    if (selectedAllianceId) {
+      const alliance = alliances.find((a) => a._id === selectedAllianceId);
+      if (!alliance) return { filteredAlliances: [], filteredCountries: [] };
+      const memberIds = new Set(alliance.memberCountries.map((m) => m.country));
+      return {
+        filteredAlliances: [alliance],
+        filteredCountries: countries.filter((c) => memberIds.has(c._id)),
+      };
     }
-  }, [maxNumberOfAllies]);
 
-  const handleMaxChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    const value = Number(e.target.value);
-    setMaxNumberOfAllies(value);
-    if (value < minNumberOfAllies) {
-      setMinNumberOfAllies(value);
-    }
-  }, [minNumberOfAllies]);
-
-  const filteredCountries = useMemo(() => {
     if (selectedCountryId) {
-      const selected = countries.find(c => c._id === selectedCountryId);
-      if (!selected) return [];
-      const visibleIds = new Set([selectedCountryId, ...selected.allies]);
-      return countries.filter(c => visibleIds.has(c._id));
-    }
-    return countries
-      .filter(c => c.allies.length >= minNumberOfAllies)
-      .filter(c => c.allies.length <= maxNumberOfAllies);
-  }, [countries, selectedCountryId, minNumberOfAllies, maxNumberOfAllies]);
+      const country = countries.find((c) => c._id === selectedCountryId);
+      if (!country) return { filteredAlliances: alliances, filteredCountries: countries };
 
-  if (loading) return <LoadingSpinner />;
+      const countryAlliance = alliances.find((a) =>
+        a.memberCountries.some((m) => m.country === selectedCountryId)
+      );
+
+      const visibleIds = new Set([selectedCountryId]);
+      if (countryAlliance) {
+        countryAlliance.memberCountries.forEach((m) => visibleIds.add(m.country));
+      }
+      if (country.defensivePacts) {
+        country.defensivePacts.forEach((id) => visibleIds.add(id));
+      }
+
+      return {
+        filteredAlliances: countryAlliance ? [countryAlliance] : [],
+        filteredCountries: countries.filter((c) => visibleIds.has(c._id)),
+      };
+    }
+
+    return { filteredAlliances: alliances, filteredCountries: countries };
+  }, [alliances, countries, selectedAllianceId, selectedCountryId]);
+
+  if (loadingCountries || loadingAlliances) return <LoadingSpinner />;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
       <h1>Alliance Network</h1>
       <CountryAlliancesFilters
+        alliances={alliances}
         countries={countries}
+        selectedAllianceId={selectedAllianceId}
         selectedCountryId={selectedCountryId}
-        onCountryChange={setSelectedCountryId}
-        minAllies={minNumberOfAllies}
-        maxAllies={maxNumberOfAllies}
-        handleMinChange={handleMinChange}
-        handleMaxChange={handleMaxChange}
-        minLimitAllies={minLimitAllies}
-        maxLimitAllies={maxLimitAllies}
+        onAllianceChange={handleAllianceChange}
+        onCountryChange={handleCountryChange}
       />
-      <CountryAlliances countries={filteredCountries} />
+      <CountryAlliances alliances={filteredAlliances} countries={filteredCountries} />
     </div>
   );
-}
+};

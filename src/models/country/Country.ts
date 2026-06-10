@@ -1,38 +1,53 @@
-/** Represents a single country */
 export interface Country {
   _id: string;
   name: string;
   code: string;
 
+  development: number;
+  currentDevelopment: number;
+  coreDevelopment: number;
+  averageDevelopment: number;
+
   money: number;
+  currentPopulation?: number;
 
   taxes: TaxInfo;
+  unrest?: UnrestInfo;
 
   orgs: string[];
   allies: string[];
+  defensivePacts?: string[];
   warsWith: string[];
+
+  allianceId?: string;
+  enemy?: string;
+  rulingParty?: string;
+
+  specializedItem?: string;
+  nonAggressionUntil?: Record<string, string>;
 
   scheme: string;
   mapAccent: string;
 
   rankings: CountryRankings;
-
   strategicResources?: StrategicResources;
 
-  updatedAt: string;
-  enemy?: string;
   currentBattleOrder?: string;
   createdAt?: string;
+  updatedAt: string;
 }
 
-/** Tax structure of a country */
 export interface TaxInfo {
   income: number;
   market: number;
   selfWork: number;
 }
 
-/** Strategic resources available to a country */
+export interface UnrestInfo {
+  bar: number;
+  barMax: number;
+}
+
 export interface StrategicResources {
   resources: ResourceMap;
   bonuses: StrategicBonuses;
@@ -45,17 +60,13 @@ export interface ResourceMap {
   coal?: string[];
   gold?: string[];
   rareEarths?: string[];
-
-  // If more resource types exist, add them here
 }
 
-/** Bonuses granted by strategic resources */
 export interface StrategicBonuses {
   productionPercent: number;
   developmentPercent: number;
 }
 
-/** Rankings of a country across various metrics */
 export interface CountryRankings {
   countryRegionDiff: RankingDetails;
   countryDamages: RankingDetails;
@@ -64,10 +75,10 @@ export interface CountryRankings {
   countryDevelopment: RankingDetails;
   countryActivePopulation: RankingDetails;
   countryWealth: RankingDetails;
+  countryBounty?: RankingDetails;
   countryProductionBonus: RankingDetails;
 }
 
-/** A generic ranking category (value + rank + tier) */
 export interface RankingDetails {
   value: number;
   rank: number;

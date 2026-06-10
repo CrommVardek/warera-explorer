@@ -1,3 +1,4 @@
+import type { Alliance } from "../../models/alliance/Alliance";
 import type { Country } from "../../models/country/Country";
 import type { MilitaryUnit } from "../../models/mu/MilitaryUnit";
 import type { User } from "../../models/user/User";
@@ -5,6 +6,12 @@ import type { User } from "../../models/user/User";
 export interface CountriesResponse {
   result: {
     data: Country[];
+  };
+}
+
+export interface AllianceByIdResponse {
+  result: {
+    data: Alliance;
   };
 }
 
