@@ -1,14 +1,15 @@
 {
   "name": "warera-explorer",
   "private": true,
-  "version": "0.1",
+  "version": "0.2.0",
   "type": "module",
   "scripts": {
     "start": "vite",
+    "start:dev": "vite --mode dev",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "generate-api": "openapi-generator-cli generate --input-spec https://api2.warera.io/openapi.json -g typescript-axios --output src/services/api-fetcher --additional-properties=supportsES6=true,typescriptThreePlus=true && npm run clean:generated-api",
+    "generate-api": "openapi-generator-cli generate --input-spec https://api.warera.io/openapi.json -g typescript-axios --output src/services/api-fetcher --additional-properties=supportsES6=true,typescriptThreePlus=true && npm run clean:generated-api",
     "clean:generated-api": "rimraf ./src/services/api-fetcher/.openapi-generator  ./src/services/api-fetcher/.openapi-generator-ignore ./src/services/api-fetcher/.npmignore ./src/services/api-fetcher/.gitignore ./src/services/api-fetcher/git_push.sh src/services/api-fetcher/docs"
   },
   "dependencies": {

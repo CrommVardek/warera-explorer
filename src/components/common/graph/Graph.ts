@@ -15,8 +15,11 @@ export interface GraphRelationship {
 
 export interface GraphNodeOptions {
   radius?: number;
+  isHub?: boolean;
 }
 
 export interface GraphRelationshipOptions {
   label?: string;
+  dashed?: boolean;
+  color?: string;
 }
