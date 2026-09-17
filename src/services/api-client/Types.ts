@@ -1,6 +1,7 @@
 import type { Alliance } from "../../models/alliance/Alliance";
 import type { Country } from "../../models/country/Country";
 import type { MilitaryUnit } from "../../models/mu/MilitaryUnit";
+import type { ItemPrices } from "../../models/item/Item";
 import type { User } from "../../models/user/User";
 
 export interface CountriesResponse {
@@ -27,5 +28,11 @@ export interface MilitaryUnitsReponse {
 export interface UserResponse {
   result: {
     data: User;
+  };
+}
+
+export interface ItemPricesResponse {
+  result: {
+    data: ItemPrices;
   };
 }
