@@ -4,11 +4,13 @@ import type {
   CountriesResponse,
   ItemPricesResponse,
   MilitaryUnitsReponse,
+  RegionsResponse,
   UserResponse,
 } from "./Types";
 import type { Alliance } from "../../models/alliance/Alliance";
 import type { MilitaryUnit } from "../../models/mu/MilitaryUnit";
 import type { ItemPrices } from "../../models/item/Item";
+import type { RegionsById } from "../../models/region/Region";
 import type { User } from "../../models/user/User";
 
 const api = axios.create({
@@ -136,4 +138,11 @@ export const getItemPrices = async (
 ): Promise<ItemPrices> => {
   const response = await api.get("/itemTrading.getPrices", config);
   return (response.data as ItemPricesResponse).result.data;
+};
+
+export const getRegions = async (
+  config?: AxiosRequestConfig<any> | undefined
+): Promise<RegionsById> => {
+  const response = await api.get("/region.getRegionsObject", config);
+  return (response.data as RegionsResponse).result.data;
 };

@@ -1,13 +1,15 @@
 import { WOODEN_CASE_CONFIG } from "../../../models/wooden-case/WoodenCase";
-import {
-  expectedCasesPerDay,
-  type WoodenCaseProfitability,
+import type {
+  TravelEconomics,
+  WoodenCaseProfitability,
 } from "../../../services/WoodenCaseService";
 import { formatGold, formatPercent } from "./format";
 
 interface WoodenCaseSummaryProps {
   profitability: WoodenCaseProfitability;
-  hourlyDropChancePercent: number;
+  travel: TravelEconomics;
+  /** Longest walk the map can demand, for context on the break-even. */
+  mapWidthInRegions: number;
 }
 
 const POSITIVE = "#2e7d32";
@@ -63,14 +65,19 @@ const Card = ({
 
 export const WoodenCaseSummary = ({
   profitability,
-  hourlyDropChancePercent,
+  travel,
+  mapWidthInRegions,
 }: WoodenCaseSummaryProps) => {
-  const { expectedValue, casePrice, profit, roi } = profitability;
+  const { expectedValue, casePrice, profit } = profitability;
   const worthOpening = profit > 0;
-  const profitColor = worthOpening ? POSITIVE : NEGATIVE;
 
-  const casesPerDay = expectedCasesPerDay(hourlyDropChancePercent);
-  const bestPerCase = Math.max(expectedValue, casePrice);
+  // The case has to be walked to either way, so travel does not change the
+  // open-or-sell call — only whether collecting is worth the trip at all.
+  const grossPerCase = Math.max(expectedValue, casePrice);
+  const netPerCase = grossPerCase - travel.travelCostPerCase;
+  const netPerDay = netPerCase * travel.casesPerDay;
+  const travelShare = grossPerCase ? travel.travelCostPerCase / grossPerCase : 0;
+  const netColor = netPerCase > 0 ? POSITIVE : NEGATIVE;
 
   return (
     <div style={{ width: "100%" }}>
@@ -93,20 +100,16 @@ export const WoodenCaseSummary = ({
           hint="What one case is worth on the market"
         />
         <Card
-          label="Edge per case"
-          value={`${profit >= 0 ? "+" : ""}${formatGold(profit)}`}
-          hint={
-            worthOpening
-              ? "Opening beats the case price"
-              : "The case is worth more unopened"
-          }
-          color={profitColor}
+          label="Travel cost"
+          value={`−${formatGold(travel.travelCostPerCase)}`}
+          hint={`${travel.regionsPerCase.toFixed(1)} regions per case, ${formatPercent(travelShare, 0)} of its value`}
+          color={NEGATIVE}
         />
         <Card
-          label="Return"
-          value={`${roi >= 0 ? "+" : ""}${formatPercent(roi, 1)}`}
-          hint="Edge relative to the case price"
-          color={profitColor}
+          label="Net per case"
+          value={`${netPerCase >= 0 ? "+" : ""}${formatGold(netPerCase)}`}
+          hint="Best of opening or selling, once the walk is paid for"
+          color={netColor}
         />
       </div>
 
@@ -127,12 +130,31 @@ export const WoodenCaseSummary = ({
           ? `Opening and selling the content returns ${formatGold(expectedValue)} per case against ${formatGold(casePrice)} for the case itself.`
           : `The case fetches ${formatGold(casePrice)} while its content is only worth ${formatGold(expectedValue)} on average.`}
         <br />
-        At a {hourlyDropChancePercent}% hourly roll you can expect{" "}
-        <strong>{casesPerDay.toFixed(1)} cases a day</strong>, worth{" "}
-        <strong>{formatGold(casesPerDay * bestPerCase)} a day</strong> taking
-        the better of the two options — provided you go and collect them, since
-        the roll is skipped while {WOODEN_CASE_CONFIG.maxPerUser} of yours sit
-        uncollected and each one expires after {WOODEN_CASE_CONFIG.expiryHours}h.
+        Either way you have to walk to it. A case lands on a random region,{" "}
+        <strong>{travel.regionsPerCase.toFixed(1)} regions away on average</strong>{" "}
+        when {WOODEN_CASE_CONFIG.maxPerUser} are collected in one trip, which at{" "}
+        {((travel.casesPerDay / 24) * 100).toFixed(0)}% hourly comes to{" "}
+        {travel.regionsPerDay.toFixed(0)} regions a day. Stamina regeneration
+        pays for {travel.staminaRegionsPerDay.toFixed(0)} of them; the remaining{" "}
+        {travel.oilRegionsPerDay.toFixed(0)} cost{" "}
+        {travel.oilPerDay.toFixed(0)} oil, or{" "}
+        <strong>{formatGold(travel.travelCostPerCase)} per case</strong>. A case
+        stops being worth the walk past{" "}
+        {Number.isFinite(travel.breakEvenRegions)
+          ? travel.breakEvenRegions.toFixed(0)
+          : "∞"}{" "}
+        regions, against a map whose furthest two regions are{" "}
+        {mapWidthInRegions} apart.
+        <br />
+        That leaves{" "}
+        <strong style={{ color: netColor }}>
+          {formatGold(netPerCase)} net per case
+        </strong>{" "}
+        and{" "}
+        <strong style={{ color: netColor }}>{formatGold(netPerDay)} a day</strong>{" "}
+        — provided you go and collect them: the roll is skipped while{" "}
+        {WOODEN_CASE_CONFIG.maxPerUser} of yours sit uncollected, and each one
+        expires after {WOODEN_CASE_CONFIG.expiryHours}h.
       </div>
     </div>
   );
