@@ -2,11 +2,13 @@ import axios, { type AxiosRequestConfig } from "axios";
 import type {
   AllianceByIdResponse,
   CountriesResponse,
+  ItemPricesResponse,
   MilitaryUnitsReponse,
   UserResponse,
 } from "./Types";
 import type { Alliance } from "../../models/alliance/Alliance";
 import type { MilitaryUnit } from "../../models/mu/MilitaryUnit";
+import type { ItemPrices } from "../../models/item/Item";
 import type { User } from "../../models/user/User";
 
 const api = axios.create({
@@ -127,4 +129,11 @@ export const getUsers = async (
   }
 
   return users;
+};
+
+export const getItemPrices = async (
+  config?: AxiosRequestConfig<any> | undefined
+): Promise<ItemPrices> => {
+  const response = await api.get("/itemTrading.getPrices", config);
+  return (response.data as ItemPricesResponse).result.data;
 };
