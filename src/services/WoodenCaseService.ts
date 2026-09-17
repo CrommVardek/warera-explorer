@@ -5,6 +5,7 @@ import {
   type ItemPrices,
   type ItemRarity,
 } from "../models/item/Item";
+import { TRAVEL_CONFIG } from "../models/region/Region";
 import {
   WOODEN_CASE_CONFIG,
   WOODEN_CASE_ITEM_CODE,
@@ -137,3 +138,66 @@ export const computeWoodenCaseProfitability = (
  */
 export const expectedCasesPerDay = (hourlyDropChancePercent: number): number =>
   (24 * hourlyDropChancePercent) / 100;
+
+export interface TravelEconomics {
+  /** Regions crossed to bring in one case, once batching is accounted for. */
+  regionsPerCase: number;
+  casesPerDay: number;
+  regionsPerDay: number;
+  /** Regions a full day of stamina regeneration pays for. */
+  staminaRegionsPerDay: number;
+  /** Regions left over, which have to be paid in oil. */
+  oilRegionsPerDay: number;
+  oilPerDay: number;
+  oilPrice: number;
+  /** Gold spent on oil to keep collecting, per day and per case. */
+  travelCostPerDay: number;
+  travelCostPerCase: number;
+  /** Regions worth walking for one case before the oil outweighs it. */
+  breakEvenRegions: number;
+}
+
+export interface TravelEconomicsInput {
+  regionsPerCase: number;
+  casesPerDay: number;
+  oilPrice: number;
+  hourlyStaminaRegen: number;
+  /** Value of one collected case, whichever of opening or selling is better. */
+  caseValue: number;
+}
+
+/**
+ * Stamina regenerates whether it is used or not, so it is the free part of the
+ * budget. Everything it cannot cover is paid in oil, and that is the real cost
+ * of collecting cases.
+ */
+export const computeTravelEconomics = ({
+  regionsPerCase,
+  casesPerDay,
+  oilPrice,
+  hourlyStaminaRegen,
+  caseValue,
+}: TravelEconomicsInput): TravelEconomics => {
+  const { staminaPerRegion, oilPerRegion } = TRAVEL_CONFIG;
+
+  const regionsPerDay = regionsPerCase * casesPerDay;
+  const staminaRegionsPerDay = (24 * hourlyStaminaRegen) / staminaPerRegion;
+  const oilRegionsPerDay = Math.max(0, regionsPerDay - staminaRegionsPerDay);
+  const oilPerDay = oilRegionsPerDay * oilPerRegion;
+  const travelCostPerDay = oilPerDay * oilPrice;
+
+  const oilCostPerRegion = oilPerRegion * oilPrice;
+
+  return {
+    regionsPerCase,
+    casesPerDay,
+    regionsPerDay,
+    staminaRegionsPerDay,
+    oilRegionsPerDay,
+    oilPerDay,
+    oilPrice,
+    travelCostPerDay,
+    travelCostPerCase: casesPerDay ? travelCostPerDay / casesPerDay : 0,
+    breakEvenRegions: oilCostPerRegion ? caseValue / oilCostPerRegion : Infinity,
+  };
+};
